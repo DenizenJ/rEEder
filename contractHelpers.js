@@ -1,7 +1,6 @@
 const { json } = require('express');
 const W3 = require('web3');
 const Constants = require('./constants');
-// const Logger = require('./logger');
 
 const web3 = new W3(Constants.infuraUrl);
 const eeContract = new web3.eth.Contract(Constants.eeAbi, Constants.eeAddress);
@@ -20,10 +19,6 @@ const isReady = async (elfId) => {
   const now = Date.now()/1000;
   return now > _elf.timestamp;
 }
-
-// const collectedRen = async () => {
-
-// }
 
 module.exports = {
   checkGas,
