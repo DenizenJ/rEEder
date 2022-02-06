@@ -10,9 +10,14 @@ const interval = 3000;
 // Prod interval - 5 minutes
 // const interval = 300000;
 
+const acceptableGwei = 90;
+const priorityGwei = 120;
+
 module.exports = {
   druids,
   assassins,
   rangers,
   interval,
+  acceptableGwei,
+  priorityGwei,
 }

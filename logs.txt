@@ -1,0 +1,18 @@
+
+ Sat Feb 05 2022 -- 8:09:35 PM --  Assassins ready: 122,259
+ Sat Feb 05 2022 -- 8:09:35 PM --  Rangers ready: 3559,4017
+ Sat Feb 05 2022 -- 8:09:36 PM --  Druids ready: 3577,4019,46
+ Sat Feb 05 2022 -- 8:09:38 PM --  Assassins ready: 122,259
+ Sat Feb 05 2022 -- 8:09:38 PM --  Rangers ready: 3559,4017
+ Sat Feb 05 2022 -- 8:09:38 PM --  Druids ready: 3577,4019,46
+ Sat Feb 05 2022 -- 9:03:43 PM --  Assassins ready: 122,259,3567,3568
+ Sat Feb 05 2022 -- 9:03:43 PM --  Rangers ready: 3559,4017
+ Sat Feb 05 2022 -- 9:04:16 PM --  Assassins ready: 122,259,3567,3568
+ Sat Feb 05 2022 -- 9:04:16 PM --  Rangers ready: 3559,4017
+ Sat Feb 05 2022 -- 9:04:16 PM --  Druids ready: 3577,4019,46
+ Sat Feb 05 2022 -- 9:05:37 PM --  Assassins ready: 122,259,3567,3568
+ Sat Feb 05 2022 -- 9:05:37 PM --  Rangers ready: 3559,4017
+ Sat Feb 05 2022 -- 9:05:37 PM --  Druids ready: 3577,4019,46
+ Sat Feb 05 2022 -- 9:06:23 PM --  Assassins ready: 122,259,3567,3568
+ Sat Feb 05 2022 -- 9:06:24 PM --  Rangers ready: 3559,4017
+ Sat Feb 05 2022 -- 9:06:24 PM --  Druids ready: 3577,4019,46
