@@ -26,16 +26,15 @@ const sendAllOnCampaign = async (readyAssassins, readyRangers) => {
   await Contracts.sendToCampaign(readyElves);
 }
 
-const healRangers = async (druidIds, rangerIds) => {
-  let shortLen = druidIds.length < rangerIds.length ? druidIds.length : rangerIds.length
-  for (let i = 0; i < shortLen; i++) {
-    await Contracts.heal(druidIds[i], rangerIds[i]);
-  }
-}
+// const healRangers = async (druidIds, rangerIds) => {
+//   let shortLen = druidIds.length < rangerIds.length ? druidIds.length : rangerIds.length
+//   for (let i = 0; i < shortLen; i++) {
+//     await Contracts.heal(druidIds[i], rangerIds[i]);
+//   }
+// }
 
 module.exports = {
   getGas,
   getReady,
   sendAllOnCampaign,
-  healRangers,
 }

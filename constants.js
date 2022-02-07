@@ -1,6 +1,6 @@
-const infuraUrl = 'https://mainnet.infura.io/v3/8f51b25628514481928898d818063534';
+const infuraUrl = 'https://mainnet.infura.io/v3/ac313a6100694a488bae7b37fccaf937';
 
-const address = 'WALLET_ADDRESS_HERE';
+const address = '0xce36878304DaB7650307e34a56e266B66c7fb4a2';
 const eeAddress = '0xa351b769a01b445c04aa1b8e6275e03ec05c1e75';
 const renAddress = '0xe6b055abb1c40b6c0bf3a4ae126b6b8dbe6c5f3f';
 

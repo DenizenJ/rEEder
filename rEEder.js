@@ -1,7 +1,7 @@
 const Logger = require('./logger');
 const Contracts = require('./contractHelpers')
 const { druids, assassins, rangers, acceptableGwei } = require('./settings');
-const { getReady, getGas, sendAllOnCampaign, healRangers } = require('./helpers');
+const { getReady, getGas, sendAllOnCampaign } = require('./helpers');
 
 const getReadyAssassins = async () => {
   let ready = await getReady(assassins)
@@ -38,7 +38,7 @@ const execute = async () => {
   } 
 
   await sendAllOnCampaign(readyAssassins, readyRangers);
-  await healRangers(readyDruids, readyRangers);
+  await Contracts.healRangers(readyDruids, readyRangers);
 }
 
 module.exports = {
