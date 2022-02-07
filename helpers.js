@@ -21,20 +21,30 @@ const getReady = async (elfIds) => {
   return readyIds;
 }
 
+const getHealable = async (elfIds) => {
+  let promises = [];
+  elfIds.forEach((elf) => {
+    promises.push(Contracts.shouldHeal(elf));
+  })
+  
+  let healList = await Promise.all(promises)
+
+  let pairs = []
+  const zip = (a, b) => a.map((k, i) => pairs.push([k, b[i]]))
+  zip(elfIds, healList);
+  let healableElves = pairs.filter((pair) => pair[1] == true)
+  let healableIds = healableElves.map((elf) => elf[0]);
+  return healableIds;
+}
+
 const sendAllOnCampaign = async (readyAssassins, readyRangers) => {
   let readyElves = readyAssassins.concat(readyRangers);
   await Contracts.sendToCampaign(readyElves);
 }
 
-// const healRangers = async (druidIds, rangerIds) => {
-//   let shortLen = druidIds.length < rangerIds.length ? druidIds.length : rangerIds.length
-//   for (let i = 0; i < shortLen; i++) {
-//     await Contracts.heal(druidIds[i], rangerIds[i]);
-//   }
-// }
-
 module.exports = {
   getGas,
   getReady,
+  getHealable,
   sendAllOnCampaign,
 }

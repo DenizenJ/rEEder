@@ -21,6 +21,15 @@ const isReady = async (elfId) => {
   return now > _elf.timestamp;
 }
 
+const shouldHeal = async (rangerId) => {
+  _ranger = await eeContract.methods.elves(rangerId).call();
+  const now = Date.now()/1000;
+  // 3600 seconds = 1 hour
+  const timePassed = parseFloat((now - _ranger.timestamp)/3600)
+  // return true if timestamp is within 4 hours
+  return timePassed < 4;
+}
+
 // Contract Write
 // sendCampaign -> [ids], campaign, sector, rollWeapons (bool), rollItems(bool), useItem(bool)
 const sendToCampaign = async (elfArray) => {
@@ -135,22 +144,22 @@ const healRangers = async (druidIds, rangerIds) => {
   batch.execute();
 }
 
-const batchTest = async () => {
-  let batch = new web3.BatchRequest();
-  let rangers = [4158,3020,3565,3569,4017,4157,4501,258,288,2581,2591,2731,3557,3559,3561,994];
+// const batchTest = async () => {
+//   let batch = new web3.BatchRequest();
+//   let rangers = [4158,3020,3565,3569,4017,4157,4501,258,288,2581,2591,2731,3557,3559,3561,994];
 
-  for (let i = 0; i < rangers.length; i++) {
-    console.log(`adding to batch ${rangers[i]}`)
-    batch.add(eeContract.methods.elves(rangers[i]).call.request())
-  }
-  console.log('executing batch')
-  batch.execute();
-}
+//   for (let i = 0; i < rangers.length; i++) {
+//     console.log(`adding to batch ${rangers[i]}`)
+//     batch.add(eeContract.methods.elves(rangers[i]).call.request())
+//   }
+//   console.log('executing batch')
+//   batch.execute();
+// }
 
 module.exports = {
   checkGas,
   isReady,
   sendToCampaign,
   healRangers,
-  batchTest,
+  shouldHeal,
 }
