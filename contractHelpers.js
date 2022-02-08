@@ -15,19 +15,15 @@ const checkGas = async () => {
 }
 
 // Contract Read
-const isReady = async (elfId) => {
+const getElfData = async (elfId) => {
+  let elf = {id: elfId}
   _elf = await eeContract.methods.elves(elfId).call();
-  const now = Date.now()/1000;
-  return now > _elf.timestamp;
-}
-
-const shouldHeal = async (rangerId) => {
-  _ranger = await eeContract.methods.elves(rangerId).call();
-  const now = Date.now()/1000;
-  // 3600 seconds = 1 hour
-  const timePassed = parseFloat((now - _ranger.timestamp)/3600)
-  // return true if timestamp is within 4 hours
-  return timePassed < 4;
+  _attributes = await eeContract.methods.attributes(elfId).call();
+  elf.timestamp = parseInt(_elf.timestamp);
+  elf.level = parseInt(_elf.level);
+  elf.weaponTier = parseInt(_attributes.weaponTier);
+  elf.hasItem = parseInt(_attributes.inventory);
+  return elf;
 }
 
 // Contract Write
@@ -39,30 +35,29 @@ const sendToCampaign = async (elfArray) => {
   let lvlFourteens = [];
   let lvlThirties = [];
 
-  elfArray.forEach((elfId) => {
-    const _elf = await eeContract.methods.elves(elfId).call();
-    if (_elf.level < 7) {
-      console.log(`Elf ${elfId} is only level ${_elf.level} - can not run current active campaigns`)
-      Logger.log(`Elf ${elfId} is only level ${_elf.level} - can not run current active campaigns`)
-    } else if (_elf.level < 14) {
-      lvlSevens.push(elfId)
-    } else if (_elf.level < 30) {
-      lvlFourteens.push(elfId)
-    } else if (_elf.level > 29) {
-      lvlThirties.push(elfId)
+  elfArray.forEach((elf) => {
+    if (elf.level < 7) {
+      console.log(`Elf ${elf.id} is only level ${elf.level} - can not run current active campaigns`)
+      Logger.log(`Elf ${elf.id} is only level ${elf.level} - can not run current active campaigns`)
+    } else if (elf.level < 14) {
+      lvlSevens.push(elf.id)
+    } else if (elf.level < 30) {
+      lvlFourteens.push(elf.id)
+    } else if (elf.level > 29) {
+      lvlThirties.push(elf.id)
     } else {
-      console.log(`Warning -- Elf ${elfId} is level ${_elf.level} and did not push into a campaign group`)
-      Logger.log(`Warning -- Elf ${elfId} is level ${_elf.level} and did not push into a campaign group`)
+      console.log(`Warning -- Elf ${elf.id} is level ${elf.level} and did not push into a campaign group`)
+      Logger.log(`Warning -- Elf ${elf.id} is level ${elf.level} and did not push into a campaign group`)
     }
   })
 
  
   // update campaign & sector info - LVL 7-13
   const txSevens = eeContract.methods.sendCampaign(lvlSevens, 1, 5, 0, 0, 0);
-  const data = txSevens.encodeABI();
-  const nonce = await web3.eth.getTransactionCount(address);
-  const gas = await txSevens.estimateGas({from: address});
-  const gasPrice = await web3.eth.getGasPrice();
+  let data = txSevens.encodeABI();
+  let nonce = await web3.eth.getTransactionCount(address);
+  let gas = await txSevens.estimateGas({from: address});
+  let gasPrice = await web3.eth.getGasPrice();
 
   const signedTxSevens = await web3.eth.accounts.signTransaction(
     {
@@ -77,10 +72,10 @@ const sendToCampaign = async (elfArray) => {
  
   // update campaign & sector info - LVL 14-29
   const txFourteens = eeContract.methods.sendCampaign(lvlFourteens, 1, 5, 0, 0, 0);
-  const data = txFourteens.encodeABI();
-  const nonce = await web3.eth.getTransactionCount(address);
-  const gas = await txFourteens.estimateGas({from: address});
-  const gasPrice = await web3.eth.getGasPrice();
+  data = txFourteens.encodeABI();
+  nonce = await web3.eth.getTransactionCount(address);
+  gas = await txFourteens.estimateGas({from: address});
+  gasPrice = await web3.eth.getGasPrice();
 
   const signedTxFourteens = await web3.eth.accounts.signTransaction(
     {
@@ -95,10 +90,10 @@ const sendToCampaign = async (elfArray) => {
  
   // update campaign & sector info - LVL 30+
   const txThirties = eeContract.methods.sendCampaign(lvlThirties, 1, 5, 0, 0, 0);
-  const data = txThirties.encodeABI();
-  const nonce = await web3.eth.getTransactionCount(address);
-  const gas = await txThirties.estimateGas({from: address});
-  const gasPrice = await web3.eth.getGasPrice();
+  data = txThirties.encodeABI();
+  nonce = await web3.eth.getTransactionCount(address);
+  gas = await txThirties.estimateGas({from: address});
+  gasPrice = await web3.eth.getGasPrice();
 
   const signedTxThirties = await web3.eth.accounts.signTransaction(
     {
@@ -111,17 +106,17 @@ const sendToCampaign = async (elfArray) => {
     process.env.KEY
   )
 
-  if (lvlSevens.lenth > 0) {
+  if (lvlSevens.length > 0) {
     console.log(`Adding ${lvlSevens} to batch campaign`)
     Logger.log(`Adding ${lvlSevens} to batch campaign`)
     batch.add(web3.eth.sendSignedTransaction.request(signedTxSevens.rawTransaction))
   }
-  if (lvlFourteens.lenth > 0) {
+  if (lvlFourteens.length > 0) {
     console.log(`Adding ${lvlFourteens} to batch campaign`)
     Logger.log(`Adding ${lvlFourteens} to batch campaign`)
     batch.add(web3.eth.sendSignedTransaction.request(signedTxFourteens.rawTransaction))
   }
-  if (lvlThirties.lenth > 0) {
+  if (lvlThirties.length > 0) {
     console.log(`Adding ${lvlThirties} to batch campaign`)
     Logger.log(`Adding ${lvlThirties} to batch campaign`)
     batch.add(web3.eth.sendSignedTransaction.request(signedTxThirties.rawTransaction))
@@ -133,11 +128,11 @@ const sendToCampaign = async (elfArray) => {
 
 }
 
-const healRangers = async (druidIds, rangerIds) => {
-  let shortLen = druidIds.length < rangerIds.length ? druidIds.length : rangerIds.length
+const healRangers = async (druids, rangers) => {
+  let shortLen = druids.length < rangers.length ? druids.length : rangers.length
   let batch = new web3.BatchRequest();
   for (let i = 0; i < shortLen; i++) {
-    const tx = eeContract.methods.heal(druidIds[i], rangerIds[i]);
+    const tx = eeContract.methods.heal(druids[i].id, rangers[i].id);
     const data = tx.encodeABI();
     const nonce = await web3.eth.getTransactionCount(address);
     const gas = await tx.estimateGas({from: address});
@@ -154,8 +149,8 @@ const healRangers = async (druidIds, rangerIds) => {
       process.env.KEY
     )
 
-    console.log(`Batching heal from Druid ${druidIds[i]} to Ranger ${rangerIds[i]}`)
-    Logger.log(`Batching heal from Druid ${druidIds[i]} to Ranger ${rangerIds[i]}`)
+    console.log(`Batching heal from Druid ${druids[i].id} to Ranger ${rangers[i].id}`)
+    Logger.log(`Batching heal from Druid ${druids[i].id} to Ranger ${rangers[i].id}`)
     batch.add(web3.eth.sendSignedTransaction.request(signedTx.rawTransaction))
   }
 
@@ -178,8 +173,7 @@ const healRangers = async (druidIds, rangerIds) => {
 
 module.exports = {
   checkGas,
-  isReady,
-  shouldHeal,
+  getElfData,
   sendToCampaign,
   healRangers,
 }

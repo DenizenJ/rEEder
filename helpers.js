@@ -5,36 +5,46 @@ const getGas = async () => {
   console.log('Current gwei: ', gwei);
 }
 
-const getReady = async (elfIds) => {
+// const getLevels = async (elves) => {
+//   let promises = [];
+//   elves.forEach((elf) => {
+//     promises.push(Contracts.checkLevel(elf));
+//   })
+//   await Promise.all(promises)
+// }
+
+const getElvesData = async (elfIds) => {
   let promises = [];
   elfIds.forEach((elf) => {
-    promises.push(Contracts.isReady(elf));
+    promises.push(Contracts.getElfData(elf));
   })
-  
-  let readyList = await Promise.all(promises)
 
-  let pairs = []
-  const zip = (a, b) => a.map((k, i) => pairs.push([k, b[i]]))
-  zip(elfIds, readyList);
-  let readyElves = pairs.filter((pair) => pair[1] == true)
-  let readyIds = readyElves.map((elf) => elf[0]);
-  return readyIds;
+  return await Promise.all(promises);
 }
 
-const getHealable = async (elfIds) => {
-  let promises = [];
-  elfIds.forEach((elf) => {
-    promises.push(Contracts.shouldHeal(elf));
+const getReady = (elves) => {
+  const readyElves = [];
+  const now = Date.now()/1000;
+  elves.forEach((elf) => {
+    if (now > elf.timestamp) {
+      readyElves.push(elf)
+    }
   })
-  
-  let healList = await Promise.all(promises)
+  return readyElves;
+}
 
-  let pairs = []
-  const zip = (a, b) => a.map((k, i) => pairs.push([k, b[i]]))
-  zip(elfIds, healList);
-  let healableElves = pairs.filter((pair) => pair[1] == true)
-  let healableIds = healableElves.map((elf) => elf[0]);
-  return healableIds;
+const shouldHeal = (elves) => {
+  const elvesToHeal = [];
+  const now = Date.now()/1000;
+  elves.forEach((elf) => {
+    // 3600 seconds = 1 hour
+    const timePassed = parseFloat((now - elf.timestamp)/3600)
+    // heal if timestamp is within 4 hours
+    if (timePassed < 4) {
+      elvesToHeal.push(elf);
+    }
+  })
+  return elvesToHeal;
 }
 
 const sendAllOnCampaign = async (readyAssassins, readyRangers) => {
@@ -44,7 +54,8 @@ const sendAllOnCampaign = async (readyAssassins, readyRangers) => {
 
 module.exports = {
   getGas,
+  getElvesData,
   getReady,
-  getHealable,
+  shouldHeal,
   sendAllOnCampaign,
 }

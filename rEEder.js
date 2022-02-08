@@ -1,31 +1,31 @@
 const Logger = require('./logger');
 const Contracts = require('./contractHelpers')
 const { druids, assassins, rangers, acceptableGwei } = require('./settings');
-const { getReady, getHealable, getGas, sendAllOnCampaign } = require('./helpers');
+const { getElvesData, getReady, shouldHeal, getGas, sendAllOnCampaign } = require('./helpers');
 
-const getReadyAssassins = async () => {
-  let ready = await getReady(assassins)
+const getReadyAssassins = (sinData) => {
+  let ready = getReady(sinData);
   Logger.log(`Assassins ready: ${ready}`)
   console.log('Assassins ready to send on a campaign: ', ready);
   return ready;
 }
 
-const getReadyRangers = async () => {
-  let ready = await getReady(rangers)
+const getReadyRangers = (rangerData) => {
+  let ready = getReady(rangerData)
   Logger.log(`Rangers ready: ${ready}`)
   console.log('Rangers ready to send on a campaign: ', ready);
   return ready;
 }
 
-const getHealableRangers = async () => {
-  let healable = await getHealable(rangers)
+const getHealableRangers = (rangerData) => {
+  let healable = shouldHeal(rangerData)
   Logger.log(`Rangers to heal: ${healable}`)
   console.log('Rangers to heal: ', healable);
   return healable;
 }
 
-const getReadyDruids = async () => {
-  let ready = await getReady(druids)
+const getReadyDruids = (druidData) => {
+  let ready = getReady(druidData)
   Logger.log(`Druids ready: ${ready}`)
   console.log('Druids ready to Heal: ', ready);
   return ready;
@@ -33,8 +33,14 @@ const getReadyDruids = async () => {
 
 const execute = async () => {
   await getGas();
-  let readyAssassins = await getReadyAssassins();
-  let readyRangers = await getReadyRangers();
+  let sinData = await getElvesData(assassins);
+  let rangerData = await getElvesData(rangers);
+  let druidData = await getElvesData(druids);
+
+  let readyAssassins = getReadyAssassins(sinData);
+  let readyRangers = getReadyRangers(rangerData);
+  let healableRangers = getHealableRangers(rangerData);
+  let readyDruids = getReadyDruids(druidData);
   
   let currentGwei = await Contracts.checkGas();
   if (parseInt(currentGwei) > acceptableGwei) {
@@ -44,9 +50,6 @@ const execute = async () => {
   } 
   
   await sendAllOnCampaign(readyAssassins, readyRangers);
-  
-  let readyDruids = await getReadyDruids();
-  let healableRangers = await getHealableRangers();
 
   currentGwei = await Contracts.checkGas();
   if (parseInt(currentGwei) > acceptableGwei) {

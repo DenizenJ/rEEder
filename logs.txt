@@ -47,3 +47,15 @@
  Mon Feb 07 2022 -- 5:48:35 PM --  Rangers ready: 4158,3020,3565,3569,4017,4157,4501,258,288,2581,2591,2731,3557,3559,3561,994
  Mon Feb 07 2022 -- 5:48:35 PM --  Druids ready: 3572,3577,3578,4018,4019,4124,4395,46,47,233,289,1065,1534,1687,2510,2667
  Mon Feb 07 2022 -- 5:48:35 PM --  Rangers to heal: 
+ Tue Feb 08 2022 -- 12:08:40 PM --  Assassins ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:40 PM --  Rangers ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:40 PM --  Rangers to heal: 
+ Tue Feb 08 2022 -- 12:08:40 PM --  Druids ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:43 PM --  Assassins ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:43 PM --  Rangers ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:43 PM --  Rangers to heal: 
+ Tue Feb 08 2022 -- 12:08:43 PM --  Druids ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:46 PM --  Assassins ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:46 PM --  Rangers ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+ Tue Feb 08 2022 -- 12:08:46 PM --  Rangers to heal: 
+ Tue Feb 08 2022 -- 12:08:46 PM --  Druids ready: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
