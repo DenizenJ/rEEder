@@ -130,6 +130,10 @@ const sendToCampaign = async (elfArray) => {
 
 const healRangers = async (druids, rangers) => {
   let shortLen = druids.length < rangers.length ? druids.length : rangers.length
+  if (shortLen < 1) {
+    return;
+  }
+  
   let batch = new web3.BatchRequest();
   for (let i = 0; i < shortLen; i++) {
     const tx = eeContract.methods.heal(druids[i].id, rangers[i].id);
