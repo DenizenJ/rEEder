@@ -33,14 +33,74 @@ const shouldHeal = async (rangerId) => {
 // Contract Write
 // sendCampaign -> [ids], campaign, sector, rollWeapons (bool), rollItems(bool), useItem(bool)
 const sendToCampaign = async (elfArray) => {
-  // to start hardcode not using items/weapons -> will want to conditionally do these
-  const tx = eeContract.methods.sendCampaign(elfArray, 1, 5, 0, 0, 0);
-  const data = tx.encodeABI();
+  let batch = new web3.BatchRequest();
+  
+  let lvlSevens = [];
+  let lvlFourteens = [];
+  let lvlThirties = [];
+
+  elfArray.forEach((elfId) => {
+    const _elf = await eeContract.methods.elves(elfId).call();
+    if (_elf.level < 7) {
+      console.log(`Elf ${elfId} is only level ${_elf.level} - can not run current active campaigns`)
+      Logger.log(`Elf ${elfId} is only level ${_elf.level} - can not run current active campaigns`)
+    } else if (_elf.level < 14) {
+      lvlSevens.push(elfId)
+    } else if (_elf.level < 30) {
+      lvlFourteens.push(elfId)
+    } else if (_elf.level > 29) {
+      lvlThirties.push(elfId)
+    } else {
+      console.log(`Warning -- Elf ${elfId} is level ${_elf.level} and did not push into a campaign group`)
+      Logger.log(`Warning -- Elf ${elfId} is level ${_elf.level} and did not push into a campaign group`)
+    }
+  })
+
+ 
+  // update campaign & sector info - LVL 7-13
+  const txSevens = eeContract.methods.sendCampaign(lvlSevens, 1, 5, 0, 0, 0);
+  const data = txSevens.encodeABI();
   const nonce = await web3.eth.getTransactionCount(address);
-  const gas = await tx.estimateGas({from: address});
+  const gas = await txSevens.estimateGas({from: address});
   const gasPrice = await web3.eth.getGasPrice();
 
-  const signedTx = await web3.eth.accounts.signTransaction(
+  const signedTxSevens = await web3.eth.accounts.signTransaction(
+    {
+      to: eeContract.options.address,
+      data,
+      nonce,
+      gas,
+      gasPrice,
+    },
+    process.env.KEY
+  )
+ 
+  // update campaign & sector info - LVL 14-29
+  const txFourteens = eeContract.methods.sendCampaign(lvlFourteens, 1, 5, 0, 0, 0);
+  const data = txFourteens.encodeABI();
+  const nonce = await web3.eth.getTransactionCount(address);
+  const gas = await txFourteens.estimateGas({from: address});
+  const gasPrice = await web3.eth.getGasPrice();
+
+  const signedTxFourteens = await web3.eth.accounts.signTransaction(
+    {
+      to: eeContract.options.address,
+      data,
+      nonce,
+      gas,
+      gasPrice,
+    },
+    process.env.KEY
+  )
+ 
+  // update campaign & sector info - LVL 30+
+  const txThirties = eeContract.methods.sendCampaign(lvlThirties, 1, 5, 0, 0, 0);
+  const data = txThirties.encodeABI();
+  const nonce = await web3.eth.getTransactionCount(address);
+  const gas = await txThirties.estimateGas({from: address});
+  const gasPrice = await web3.eth.getGasPrice();
+
+  const signedTxThirties = await web3.eth.accounts.signTransaction(
     {
       to: eeContract.options.address,
       data,
@@ -51,67 +111,27 @@ const sendToCampaign = async (elfArray) => {
     process.env.KEY
   )
 
-  const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
-  .on('transactionHash', function(hash){
-    console.log('.')
-    Logger.log(`Hash from sendToCampaign(): ${hash}`)
-  })
-  .on('receipt', function(receipt){
-    console.log('.')
-    Logger.log(`Receipt from sendToCampaign(): ${receipt}`)
-  })
-  .on('confirmation', function(confirmationNumber, receipt){
-    console.log('.')
-    Logger.log(`Confirmation from sendToCampaign(): ${confirmationNumber}`)
-    return receipt;
-  })
-  .on('error', function(error, receipt) {
-    console.log('!ERROR - sendToCampaign() -- ', error)
-    Logger.log(`ERROR from sendToCampaign(): ${error}`)
-  return receipt
-});
+  if (lvlSevens.lenth > 0) {
+    console.log(`Adding ${lvlSevens} to batch campaign`)
+    Logger.log(`Adding ${lvlSevens} to batch campaign`)
+    batch.add(web3.eth.sendSignedTransaction.request(signedTxSevens.rawTransaction))
+  }
+  if (lvlFourteens.lenth > 0) {
+    console.log(`Adding ${lvlFourteens} to batch campaign`)
+    Logger.log(`Adding ${lvlFourteens} to batch campaign`)
+    batch.add(web3.eth.sendSignedTransaction.request(signedTxFourteens.rawTransaction))
+  }
+  if (lvlThirties.lenth > 0) {
+    console.log(`Adding ${lvlThirties} to batch campaign`)
+    Logger.log(`Adding ${lvlThirties} to batch campaign`)
+    batch.add(web3.eth.sendSignedTransaction.request(signedTxThirties.rawTransaction))
+  }
+  console.log(`Executing batch campaign`)
+  Logger.log(`Executing batch campaign`)
+  batch.execute();
 
-  return receipt;
+
 }
-
-// const heal = async (healer, target) => {
-//   const tx = eeContract.methods.heal(healer, target);
-//   const data = tx.encodeABI();
-//   const gas = await tx.estimateGas({from: address});
-//   const gasPrice = await web3.eth.getGasPrice();
-
-//   const signedTx = await web3.eth.accounts.signTransaction(
-//     {
-//       to: eeContract.options.address,
-//       data,
-//       gas,
-//       gasPrice,
-//     },
-//     process.env.KEY
-//   )
-
-//   const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
-//   .on('transactionHash', function(hash){
-//     console.log('.')
-//     Logger.log(`Hash from heal(): ${hash}`)
-//   })
-//   .on('receipt', function(receipt){
-//     console.log('.')
-//     Logger.log(`Receipt from heal(): ${receipt}`)
-//   })
-//   .on('confirmation', function(confirmationNumber, receipt){
-//     console.log('.')
-//     Logger.log(`Confirmation from heal(): ${confirmationNumber}`)
-//     return receipt;
-//   })
-//   .on('error', function(error, receipt) {
-//     console.log('!ERROR - heal() -- ', error)
-//     Logger.log(`ERROR from heal(): ${error}`)
-//   return receipt
-// });
-
-//   return receipt;
-// }
 
 const healRangers = async (druidIds, rangerIds) => {
   let shortLen = druidIds.length < rangerIds.length ? druidIds.length : rangerIds.length
@@ -159,7 +179,7 @@ const healRangers = async (druidIds, rangerIds) => {
 module.exports = {
   checkGas,
   isReady,
+  shouldHeal,
   sendToCampaign,
   healRangers,
-  shouldHeal,
 }
