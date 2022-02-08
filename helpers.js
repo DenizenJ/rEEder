@@ -5,14 +5,6 @@ const getGas = async () => {
   console.log('Current gwei: ', gwei);
 }
 
-// const getLevels = async (elves) => {
-//   let promises = [];
-//   elves.forEach((elf) => {
-//     promises.push(Contracts.checkLevel(elf));
-//   })
-//   await Promise.all(promises)
-// }
-
 const getElvesData = async (elfIds) => {
   let promises = [];
   elfIds.forEach((elf) => {
@@ -30,21 +22,24 @@ const getReady = (elves) => {
       readyElves.push(elf)
     }
   })
-  return readyElves;
+  let sortedElves = readyElves.sort((a, b) => a.id - b.id)
+  return sortedElves;
 }
 
 const shouldHeal = (elves) => {
   const elvesToHeal = [];
   const now = Date.now()/1000;
+  console.log('now', now);
   elves.forEach((elf) => {
     // 3600 seconds = 1 hour
-    const timePassed = parseFloat((now - elf.timestamp)/3600)
-    // heal if timestamp is within 4 hours
-    if (timePassed < 4) {
+    const cooldownTime = parseFloat((elf.timestamp - now)/3600)
+    // heal if cooldownTime > 18 hours
+    if (cooldownTime > 18) {
       elvesToHeal.push(elf);
     }
   })
-  return elvesToHeal;
+  let sortedElves = elvesToHeal.sort((a, b) => b.timestamp - a.timestamp )
+  return sortedElves;
 }
 
 const sendAllOnCampaign = async (readyAssassins, readyRangers) => {

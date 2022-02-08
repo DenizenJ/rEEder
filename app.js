@@ -9,7 +9,6 @@ var usersRouter = require('./routes/users');
 
 const { interval } = require('./settings');
 const rEEder = require('./rEEder');
-const Helpers = require('./helpers')
 
 var app = express();
 
@@ -41,7 +40,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
 
 const run =  () => {
   setInterval(rEEder.execute, interval);

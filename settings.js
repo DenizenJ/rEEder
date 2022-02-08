@@ -9,10 +9,10 @@ const rangers = [4158,3020,3565,3569,4017,4157,4501,258,288,2581,2591,2731,3557,
 // const sector = 5;
 
 // Testing interval - 5 seconds
-const interval = 3000;
+// const interval = 3000;
 
 // Prod interval - 5 minutes
-// const interval = 300000;
+const interval = 300000;
 
 const acceptableGwei = 90;
 const priorityGwei = 120;
