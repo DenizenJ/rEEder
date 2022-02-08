@@ -28,6 +28,8 @@ const getElfData = async (elfId) => {
 
 // Contract Write
 // sendCampaign -> [ids], campaign, sector, rollWeapons (bool), rollItems(bool), useItem(bool)
+// campaigns 4,5,6
+// sector 5
 const sendToCampaign = async (elfArray) => {
   let batch = new web3.BatchRequest();
   
@@ -53,7 +55,7 @@ const sendToCampaign = async (elfArray) => {
 
  
   // update campaign & sector info - LVL 7-13
-  const txSevens = eeContract.methods.sendCampaign(lvlSevens, 1, 5, 0, 0, 0);
+  const txSevens = eeContract.methods.sendCampaign(lvlSevens, 4, 5, 0, 0, 0);
   let data = txSevens.encodeABI();
   let nonce = await web3.eth.getTransactionCount(address);
   let gas = await txSevens.estimateGas({from: address});
@@ -71,7 +73,7 @@ const sendToCampaign = async (elfArray) => {
   )
  
   // update campaign & sector info - LVL 14-29
-  const txFourteens = eeContract.methods.sendCampaign(lvlFourteens, 1, 5, 0, 0, 0);
+  const txFourteens = eeContract.methods.sendCampaign(lvlFourteens, 5, 5, 0, 0, 0);
   data = txFourteens.encodeABI();
   nonce = await web3.eth.getTransactionCount(address);
   gas = await txFourteens.estimateGas({from: address});
@@ -89,7 +91,7 @@ const sendToCampaign = async (elfArray) => {
   )
  
   // update campaign & sector info - LVL 30+
-  const txThirties = eeContract.methods.sendCampaign(lvlThirties, 1, 5, 0, 0, 0);
+  const txThirties = eeContract.methods.sendCampaign(lvlThirties, 6, 5, 0, 0, 0);
   data = txThirties.encodeABI();
   nonce = await web3.eth.getTransactionCount(address);
   gas = await txThirties.estimateGas({from: address});
@@ -133,7 +135,7 @@ const healRangers = async (druids, rangers) => {
   if (shortLen < 1) {
     return;
   }
-  
+
   let batch = new web3.BatchRequest();
   for (let i = 0; i < shortLen; i++) {
     const tx = eeContract.methods.heal(druids[i].id, rangers[i].id);
