@@ -17,12 +17,12 @@ const checkGas = async () => {
 // Contract Read
 const getElfData = async (elfId) => {
   let elf = {id: elfId}
-  _elf = await eeContract.methods.elves(elfId).call();
-  _attributes = await eeContract.methods.attributes(elfId).call();
+  let _elf = await eeContract.methods.elves(elfId).call();
+  let _attributes = await eeContract.methods.attributes(elfId).call();
   elf.timestamp = parseInt(_elf.timestamp);
   elf.level = parseInt(_elf.level);
   elf.weaponTier = parseInt(_attributes.weaponTier);
-  elf.hasItem = parseInt(_attributes.inventory);
+  elf.inventory = parseInt(_attributes.inventory);
   return elf;
 }
 
@@ -42,10 +42,16 @@ const sendToCampaign = async (elfArray) => {
       console.log(`Elf ${elf.id} is only level ${elf.level} - can not run current active campaigns`)
       Logger.log(`Elf ${elf.id} is only level ${elf.level} - can not run current active campaigns`)
     } else if (elf.level < 14) {
+      console.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 4`)
+      Logger.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 4`)
       lvlSevens.push(elf.id)
     } else if (elf.level < 30) {
+      console.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 5`)
+      Logger.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 5`)
       lvlFourteens.push(elf.id)
-    } else if (elf.level > 29) {
+    } else if (elf.level >= 30) {
+      console.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 6`)
+      Logger.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 6`)
       lvlThirties.push(elf.id)
     } else {
       console.log(`Warning -- Elf ${elf.id} is level ${elf.level} and did not push into a campaign group`)

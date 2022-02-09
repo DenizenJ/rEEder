@@ -4,30 +4,30 @@ const { druids, assassins, rangers, acceptableGwei } = require('./settings');
 const { getElvesData, getReady, shouldHeal, getGas, sendAllOnCampaign } = require('./helpers');
 
 const getReadyAssassins = (sinData) => {
+  Logger.log(`getting ready Assassins`)
+  console.log('getting ready Assassins');
   let ready = getReady(sinData);
-  Logger.log(`Assassins ready: ${ready}`)
-  console.log('Assassins ready to send on a campaign: ', ready);
   return ready;
 }
 
 const getReadyRangers = (rangerData) => {
+  Logger.log(`getting ready Rangers`)
+  console.log('getting ready Rangers');
   let ready = getReady(rangerData)
-  Logger.log(`Rangers ready: ${ready}`)
-  console.log('Rangers ready to send on a campaign: ', ready);
   return ready;
 }
 
 const getHealableRangers = (rangerData) => {
+  Logger.log(`getting healable Rangers`)
+  console.log('getting healable Rangers');
   let healable = shouldHeal(rangerData)
-  Logger.log(`Rangers to heal: ${healable}`)
-  console.log('Rangers to heal: ', healable);
   return healable;
 }
 
 const getReadyDruids = (druidData) => {
+  Logger.log(`getting ready Druids`)
+  console.log('getting ready Druids');
   let ready = getReady(druidData)
-  Logger.log(`Druids ready: ${ready}`)
-  console.log('Druids ready to Heal: ', ready);
   return ready;
 }
 
@@ -48,8 +48,11 @@ const execute = async () => {
     Logger.log(`Current gwei: ${currentGwei} -- pausing before starting campaign`)
     return
   } 
-  
-  await sendAllOnCampaign(readyAssassins, readyRangers);
+
+  // sending even if fully empty
+  if (readyAssassins.length > 0 || readyRangers.length > 0) {
+    await sendAllOnCampaign(readyAssassins, readyRangers);
+  }
 
   currentGwei = await Contracts.checkGas();
   if (parseInt(currentGwei) > acceptableGwei) {
