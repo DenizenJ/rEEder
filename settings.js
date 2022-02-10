@@ -11,6 +11,10 @@ const lowLevel = 7
 const midLevel = 14
 const highLevel = 30
 
+const lowCamp = 4
+const midCamp = 5
+const highCamp = 6
+
 
 // RUNTIME VARIABLES
 // Testing interval - 5 seconds
@@ -29,6 +33,9 @@ module.exports = {
   lowLevel,
   midLevel,
   highLevel,
+  lowCamp,
+  midCamp,
+  highCamp,
   interval,
   acceptableGwei,
   priorityGwei,

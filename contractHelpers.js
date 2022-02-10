@@ -1,7 +1,7 @@
 require('dotenv').config();
 const W3 = require('web3');
 const Logger = require('./logger');
-const { lowLevel, midLevel, highLevel } = require('./settings');
+const { lowLevel, midLevel, highLevel, lowCamp, midCamp, highCamp } = require('./settings');
 const Constants = require('./constants');
 const address = Constants.address;
 const web3 = new W3(Constants.infuraUrl);
@@ -32,6 +32,10 @@ const getElfData = async (elfId) => {
 // campaigns 4,5,6
 // sector 5
 const sendToCampaign = async (elfArray) => {
+  if (elfArray.length < 1) {
+    // break out if no elves available to campaign
+    return
+  }
   let batch = new web3.BatchRequest();
   
   let lowLevels = [];
@@ -60,7 +64,7 @@ const sendToCampaign = async (elfArray) => {
     }
   })
 
-  const txLow = eeContract.methods.sendCampaign(lowLevels, 4, 5, 0, 1, 1);
+  const txLow = eeContract.methods.sendCampaign(lowLevels, lowCamp, 5, 0, 1, 1);
   let data = txLow.encodeABI();
   let nonce = await web3.eth.getTransactionCount(address);
   let gas = await txLow.estimateGas({from: address});
@@ -77,7 +81,7 @@ const sendToCampaign = async (elfArray) => {
     process.env.KEY
   )
  
-  const txMid = eeContract.methods.sendCampaign(midLevels, 5, 5, 0, 1, 1);
+  const txMid = eeContract.methods.sendCampaign(midLevels, midCamp, 5, 0, 1, 1);
   data = txMid.encodeABI();
   nonce = await web3.eth.getTransactionCount(address);
   gas = await txMid.estimateGas({from: address});
@@ -94,7 +98,7 @@ const sendToCampaign = async (elfArray) => {
     process.env.KEY
   )
  
-  const txHigh = eeContract.methods.sendCampaign(highLevels, 6, 5, 0, 1, 1);
+  const txHigh = eeContract.methods.sendCampaign(highLevels, highCamp, 5, 0, 1, 1);
   data = txHigh.encodeABI();
   nonce = await web3.eth.getTransactionCount(address);
   gas = await txHigh.estimateGas({from: address});

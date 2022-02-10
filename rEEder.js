@@ -49,10 +49,7 @@ const execute = async () => {
     return
   } 
 
-  // sending even if fully empty
-  if (readyAssassins.length > 0 || readyRangers.length > 0) {
-    await sendAllOnCampaign(readyAssassins, readyRangers);
-  }
+  await sendAllOnCampaign(readyAssassins, readyRangers);
 
   currentGwei = await Contracts.checkGas();
   if (parseInt(currentGwei) > acceptableGwei) {
