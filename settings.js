@@ -18,10 +18,10 @@ const highCamp = 6
 
 // RUNTIME VARIABLES
 // Testing interval - 5 seconds
-const interval = 5000;
+// const interval = 5000;
 
 // Prod interval - 5 minutes
-// const interval = 300000;
+const interval = 300000;
 
 const acceptableGwei = 90;
 const priorityGwei = 120;
