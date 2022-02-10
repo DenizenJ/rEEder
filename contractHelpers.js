@@ -1,7 +1,8 @@
 require('dotenv').config();
 const W3 = require('web3');
-const Constants = require('./constants');
 const Logger = require('./logger');
+const { lowLevel, midLevel, highLevel } = require('./settings');
+const Constants = require('./constants');
 const address = Constants.address;
 const web3 = new W3(Constants.infuraUrl);
 const eeContract = new web3.eth.Contract(Constants.eeAbi, Constants.eeAddress);
@@ -33,41 +34,39 @@ const getElfData = async (elfId) => {
 const sendToCampaign = async (elfArray) => {
   let batch = new web3.BatchRequest();
   
-  let lvlSevens = [];
-  let lvlFourteens = [];
-  let lvlThirties = [];
+  let lowLevels = [];
+  let midLevels = [];
+  let highLevels = [];
 
   elfArray.forEach((elf) => {
-    if (elf.level < 7) {
+    if (elf.level < lowLevel) {
       console.log(`Elf ${elf.id} is only level ${elf.level} - can not run current active campaigns`)
       Logger.log(`Elf ${elf.id} is only level ${elf.level} - can not run current active campaigns`)
-    } else if (elf.level < 14) {
+    } else if (elf.level < midLevel) {
       console.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 4`)
       Logger.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 4`)
-      lvlSevens.push(elf.id)
-    } else if (elf.level < 30) {
+      lowLevels.push(elf.id)
+    } else if (elf.level < highLevel) {
       console.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 5`)
       Logger.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 5`)
-      lvlFourteens.push(elf.id)
-    } else if (elf.level >= 30) {
+      midLevels.push(elf.id)
+    } else if (elf.level >= highLevel) {
       console.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 6`)
       Logger.log(`Elf ${elf.id} is level ${elf.level} - sending to campaign 6`)
-      lvlThirties.push(elf.id)
+      highLevels.push(elf.id)
     } else {
       console.log(`Warning -- Elf ${elf.id} is level ${elf.level} and did not push into a campaign group`)
       Logger.log(`Warning -- Elf ${elf.id} is level ${elf.level} and did not push into a campaign group`)
     }
   })
 
- 
-  // update campaign & sector info - LVL 7-13
-  const txSevens = eeContract.methods.sendCampaign(lvlSevens, 4, 5, 0, 0, 0);
-  let data = txSevens.encodeABI();
+  const txLow = eeContract.methods.sendCampaign(lowLevels, 4, 5, 0, 1, 1);
+  let data = txLow.encodeABI();
   let nonce = await web3.eth.getTransactionCount(address);
-  let gas = await txSevens.estimateGas({from: address});
+  let gas = await txLow.estimateGas({from: address});
   let gasPrice = await web3.eth.getGasPrice();
 
-  const signedTxSevens = await web3.eth.accounts.signTransaction(
+  const signedTxLow = await web3.eth.accounts.signTransaction(
     {
       to: eeContract.options.address,
       data,
@@ -78,14 +77,13 @@ const sendToCampaign = async (elfArray) => {
     process.env.KEY
   )
  
-  // update campaign & sector info - LVL 14-29
-  const txFourteens = eeContract.methods.sendCampaign(lvlFourteens, 5, 5, 0, 0, 0);
-  data = txFourteens.encodeABI();
+  const txMid = eeContract.methods.sendCampaign(midLevels, 5, 5, 0, 1, 1);
+  data = txMid.encodeABI();
   nonce = await web3.eth.getTransactionCount(address);
-  gas = await txFourteens.estimateGas({from: address});
+  gas = await txMid.estimateGas({from: address});
   gasPrice = await web3.eth.getGasPrice();
 
-  const signedTxFourteens = await web3.eth.accounts.signTransaction(
+  const signedTxMid = await web3.eth.accounts.signTransaction(
     {
       to: eeContract.options.address,
       data,
@@ -96,14 +94,13 @@ const sendToCampaign = async (elfArray) => {
     process.env.KEY
   )
  
-  // update campaign & sector info - LVL 30+
-  const txThirties = eeContract.methods.sendCampaign(lvlThirties, 6, 5, 0, 0, 0);
-  data = txThirties.encodeABI();
+  const txHigh = eeContract.methods.sendCampaign(highLevels, 6, 5, 0, 1, 1);
+  data = txHigh.encodeABI();
   nonce = await web3.eth.getTransactionCount(address);
-  gas = await txThirties.estimateGas({from: address});
+  gas = await txHigh.estimateGas({from: address});
   gasPrice = await web3.eth.getGasPrice();
 
-  const signedTxThirties = await web3.eth.accounts.signTransaction(
+  const signedTxHigh = await web3.eth.accounts.signTransaction(
     {
       to: eeContract.options.address,
       data,
@@ -114,20 +111,20 @@ const sendToCampaign = async (elfArray) => {
     process.env.KEY
   )
 
-  if (lvlSevens.length > 0) {
-    console.log(`Adding ${lvlSevens} to batch campaign`)
-    Logger.log(`Adding ${lvlSevens} to batch campaign`)
-    batch.add(web3.eth.sendSignedTransaction.request(signedTxSevens.rawTransaction))
+  if (lowLevels.length > 0) {
+    console.log(`Adding ${lowLevels} to batch campaign`)
+    Logger.log(`Adding ${lowLevels} to batch campaign`)
+    batch.add(web3.eth.sendSignedTransaction.request(signedTxLow.rawTransaction))
   }
-  if (lvlFourteens.length > 0) {
-    console.log(`Adding ${lvlFourteens} to batch campaign`)
-    Logger.log(`Adding ${lvlFourteens} to batch campaign`)
-    batch.add(web3.eth.sendSignedTransaction.request(signedTxFourteens.rawTransaction))
+  if (midLevels.length > 0) {
+    console.log(`Adding ${midLevels} to batch campaign`)
+    Logger.log(`Adding ${midLevels} to batch campaign`)
+    batch.add(web3.eth.sendSignedTransaction.request(signedTxMid.rawTransaction))
   }
-  if (lvlThirties.length > 0) {
-    console.log(`Adding ${lvlThirties} to batch campaign`)
-    Logger.log(`Adding ${lvlThirties} to batch campaign`)
-    batch.add(web3.eth.sendSignedTransaction.request(signedTxThirties.rawTransaction))
+  if (highLevels.length > 0) {
+    console.log(`Adding ${highLevels} to batch campaign`)
+    Logger.log(`Adding ${highLevels} to batch campaign`)
+    batch.add(web3.eth.sendSignedTransaction.request(signedTxHigh.rawTransaction))
   }
   console.log(`Executing batch campaign`)
   Logger.log(`Executing batch campaign`)
@@ -170,18 +167,6 @@ const healRangers = async (druids, rangers) => {
   Logger.log(`Executing batch heal`)
   batch.execute();
 }
-
-// const batchTest = async () => {
-//   let batch = new web3.BatchRequest();
-//   let rangers = [4158,3020,3565,3569,4017,4157,4501,258,288,2581,2591,2731,3557,3559,3561,994];
-
-//   for (let i = 0; i < rangers.length; i++) {
-//     console.log(`adding to batch ${rangers[i]}`)
-//     batch.add(eeContract.methods.elves(rangers[i]).call.request())
-//   }
-//   console.log('executing batch')
-//   batch.execute();
-// }
 
 module.exports = {
   checkGas,
